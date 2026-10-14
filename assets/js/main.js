@@ -10,6 +10,19 @@
   var d = document;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ------------------------------------------------------- 0. 首屏入场
+     样式在 CSS 里（.hero-in 的 opacity/transform + 各自 --hd 延迟），
+     JS 只负责加 .is-in。双 rAF 是为了确保初始态已经被浏览器采样过，
+     否则一帧内加类不会触发 transition。 */
+  var heroIns = [].slice.call(d.querySelectorAll('.hero-in'));
+  if (heroIns.length) {
+    var playHero = function () {
+      heroIns.forEach(function (el) { el.classList.add('is-in'); });
+    };
+    if (reduceMotion) { playHero(); }
+    else { window.requestAnimationFrame(function () { window.requestAnimationFrame(playHero); }); }
+  }
+
   /* ------------------------------------------------------------ 1. 吸顶 */
   var header = d.getElementById('siteHeader');
   function syncHeader() {
@@ -156,6 +169,22 @@
   var pdClose = d.getElementById('pdClose');
   var lastFocus = null;
 
+  /* 改地址栏的 hash 必须用 history.pushState / replaceState，不能用
+     `location.hash = 'works'`：后者是一次「片段导航」，浏览器会滚到对应
+     锚点——关闭详情时就把页面拽回作品区顶部（实测从 2600 跳到 1388），
+     这就是「退出详情页后页面往上滑」的原因。pushState 只改地址栏，
+     不触发滚动，也不产生 history 条目以外的副作用。 */
+  function setHash(id, replace) {
+    // id 传 null = 清掉 hash（回到干净的 URL，不留任何可滚动的锚点）
+    var base = location.href.split('#')[0];
+    var target = id ? '#' + id : base;
+    var current = id ? location.hash : location.href;
+    if (current === target) return;
+    try {
+      history[replace ? 'replaceState' : 'pushState'](null, '', target);
+    } catch (e) { /* 少数环境（含 file://）会拒绝，忽略：只是地址栏不同步 */ }
+  }
+
   function openProject(id) {
     var card = d.querySelector('.work-card[data-project="' + id + '"]');
     var detail = d.getElementById('detail-' + id);
@@ -176,7 +205,7 @@
     if (typeof dlg.showModal === 'function') { dlg.showModal(); }
     else { dlg.setAttribute('open', ''); }
     pdBody.scrollTop = 0;
-    if (location.hash !== '#' + id) location.hash = id;
+    setHash(id, false);
   }
 
   function closeProject() {
@@ -195,15 +224,53 @@
     dlg.addEventListener('close', function () {
       d.body.classList.remove('pd-open');
       d.body.style.paddingRight = '';
-      if (/^#p\d+$/.test(location.hash)) location.hash = 'works';
-      if (lastFocus && lastFocus.focus) lastFocus.focus();
+      if (/^#p\d+$/.test(location.hash)) setHash(null, true);
+      // 焦点回到原卡片；preventScroll 避免浏览器再滚一次（focus 默认会把
+      // 元素滚进视野，卡片不在视野里时就会再次位移）
+      if (lastFocus && lastFocus.focus) {
+        try { lastFocus.focus({ preventScroll: true }); }
+        catch (e) { lastFocus.focus(); }
+      }
     });
     // 按钮本身不需要额外绑定：click 会冒泡到卡片
-    window.addEventListener('hashchange', function () {
+    // pushState 不会触发 hashchange，所以前进/后退要监听 popstate；
+    // hashchange 保留给「手动改地址栏」这种片段导航。
+    function syncFromHash() {
       var m = /^#(p\d+)$/.exec(location.hash);
-      if (m) openProject(m[1]);
-    });
+      if (m) { openProject(m[1]); } else { closeProject(); }
+    }
+    window.addEventListener('hashchange', syncFromHash);
+    window.addEventListener('popstate', syncFromHash);
     var m0 = /^#(p\d+)$/.exec(location.hash);
     if (m0) openProject(m0[1]);
+  }
+
+  /* ------------------------------------------------------- 8. 边缘发光
+     移植自 React Bits 的 <BorderGlow /> 的 JS 部分：pointermove 时算出
+     「离边缘多近」和「光标在哪个角度」，写成两个 CSS 变量，剩下的全交给 CSS。
+     原组件是 React 的 onPointerMove + useRef，这里换成每个卡片自己监听
+     pointermove —— 只在指针真的在卡片上时才触发，比在 document 上委托再
+     closest() 更省，也不用每帧 getBoundingClientRect 找目标。
+     两个提前 return：触摸设备没有 hover（CSS 已改成描边常亮），
+     reduced-motion 下三层都被 CSS 关掉，两种情况都不需要绑事件。 */
+  var glows = [].slice.call(d.querySelectorAll('.edge-glow'));
+  if (glows.length && window.matchMedia('(hover: hover)').matches && !reduceMotion) {
+    glows.forEach(function (card) {
+      card.addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'touch') return;
+        var r = card.getBoundingClientRect();
+        var dx = e.clientX - r.left - r.width / 2;
+        var dy = e.clientY - r.top - r.height / 2;
+        // kx / ky = 到边缘还剩几个半宽/半高；取小的那个决定「有多靠边」
+        var kx = dx !== 0 ? (r.width / 2) / Math.abs(dx) : Infinity;
+        var ky = dy !== 0 ? (r.height / 2) / Math.abs(dy) : Infinity;
+        // 中心 = 0，边缘 = 1
+        var edge = Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
+        var deg = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+        if (deg < 0) deg += 360;
+        card.style.setProperty('--edge-proximity', (edge * 100).toFixed(3));
+        card.style.setProperty('--cursor-angle', deg.toFixed(3) + 'deg');
+      }, { passive: true });
+    });
   }
 })();

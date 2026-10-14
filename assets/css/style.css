@@ -28,6 +28,29 @@
   --c-on-dark: #F8FAFC;
   --c-on-dark-muted: #94A3B8;
 
+  /* 辅助色：青。只做点缀，面积控制在 5~10%，和强调蓝形成冷暖对比。
+     深色底用 --c-aux，浅色底用 --c-aux-deep（#0E7490 在白底上 5.35:1）。
+     禁止大面积铺色、禁止做渐变主色。 */
+  --c-aux: #22D3EE;
+  --c-aux-deep: #0E7490;
+
+  /* 阴影层级：双层微阴影（近处实 + 远处虚），不用大扩散的柔光 */
+  --elev-1: 0 1px 2px rgba(15,23,42,.04), 0 6px 16px -10px rgba(15,23,42,.12);
+  --elev-2: 0 2px 4px rgba(15,23,42,.05), 0 16px 32px -14px rgba(15,23,42,.22);
+  --elev-panel: 0 18px 40px -18px rgba(2,6,23,.55);
+
+  /* 代码窗口（首屏右列视觉主体，纯 CSS 绘制，无图片） */
+  --code-bg: #131C31;
+  --code-bar: rgba(255,255,255,.04);
+  --code-line: rgba(255,255,255,.10);
+  /* 语法色 4 支，全在既有色相里，不引入新色相。只有一支蓝，所以靠
+     「饱和度 + 明度」拉开层次：注释最暗(4.9:1) → 字符串灰蓝(6.9:1)
+     → 关键字鲜蓝(6.7:1) → 类型近白(11.4:1) */
+  --code-cmt: #7C8AA0;
+  --code-key: var(--c-accent-soft);
+  --code-typ: #CBD5E1;
+  --code-str: #8FA8C6;
+
   /* 字号层级（5 级） */
   --fs-1: clamp(2.125rem, 1.5rem + 2.8vw, 3.5rem);
   --fs-2: clamp(1.375rem, 1.15rem + 1.2vw, 2rem);
@@ -84,9 +107,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 a { color: var(--c-accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+/* 字重阶梯：400 正文 / 500 副标题与强调句 / 600 卡片与组件标题 / 700 仅一级大标题。
+   原来只有 400 和 700 两档，中间断档，卡片标题用 700 显得笨重。 */
 h1 { font-size: var(--fs-1); line-height: 1.15; font-weight: 700; letter-spacing: -.02em; }
 h2 { font-size: var(--fs-2); line-height: 1.3; font-weight: 700; letter-spacing: -.01em; }
-h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
+/* 中文标题在大字号下加 -.01em 收紧字距；卡片标题降到 600 */
+h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 600; letter-spacing: -.01em; }
 
 :where(a, button, input, textarea, summary):focus-visible {
   outline: 3px solid var(--c-accent);
@@ -144,7 +170,11 @@ h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
   text-transform: uppercase;
   color: var(--c-accent);
 }
-.section--dark .eyebrow { color: var(--c-accent-soft); }
+/* 深色底上必须换成浅蓝。原来只写了 .section--dark，而首屏的 class 是 .hero，
+   所以首屏 eyebrow 一直用的 #2563EB —— 在 #0F172A 上只有 3.45:1，加了极光
+   背景后进一步掉到 2.43:1。补上 .hero 即可（#60A5FA，实测 7.02:1） */
+.section--dark .eyebrow,
+.hero .eyebrow { color: var(--c-accent-soft); }
 
 .grid { display: grid; gap: 20px; }
 .grid--2 { grid-template-columns: 1fr; }
@@ -152,14 +182,18 @@ h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
 .grid--4 { grid-template-columns: 1fr; }
 
 .card {
-  background: var(--c-paper);
-  border: 1px solid var(--c-line);
+  /* 极淡渐变底 + 半透明边框 + 双层微阴影：在 #F8FAFC 上也能立住边界 */
+  background: linear-gradient(180deg, #FFFFFF 0%, #FCFDFF 100%);
+  border: 1px solid rgba(226,232,240,.9);
   border-radius: var(--radius-lg);
   padding: 24px;
-  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  box-shadow: var(--elev-1);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              transform var(--dur) var(--ease);
 }
-.card:hover { border-color: var(--c-line-strong); }
-.card--lift:hover { transform: translateY(-3px); border-color: var(--c-accent); }
+.card:hover { border-color: rgba(37,99,235,.38); box-shadow: var(--elev-2); }
+/* 位移幅度保持 -3px，不再加大；只让边框转到强调蓝 */
+.card--lift:hover { transform: translateY(-3px); border-color: rgba(37,99,235,.55); }
 
 .tag {
   display: inline-flex; align-items: center;
@@ -174,8 +208,261 @@ h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
 }
 .tag--accent { border-color: #BFDBFE; background: #EFF6FF; color: var(--c-accent-deep); }
 .section--dark .tag { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: var(--c-on-dark); }
+/* 辅助色变体：只给「待填写 / 占位」这类空态芯片用，语义上和真实内容的
+   蓝色区分开 —— 看到青色就知道这块还没填。
+   用显式 class 而不是 .work-card .tag 后代选择器：一是占位芯片搬进弹层
+   后仍保持同色，二是将来往里填真实技术标签时不会被一起染成青色。
+   填真实内容时把 tag--aux 去掉，写普通的 tag 或 tag--accent 即可。 */
+.tag--aux { border-color: rgba(8,145,178,.28); background: rgba(34,211,238,.08); color: var(--c-aux-deep); }
 
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---- 渐变文字 .gt ---------------------------------------------------------
+   移植自 React Bits 的 <GradientText />，但只取它的静态那一半。
+   原组件是 React + 每帧重算渐变字符串的 rAF；本项目禁 React（_RULES 一·1/2），
+   且已确定「静态渐变 + 无光晕」，所以那套 JS 一行都不需要 ——
+   效果全部由 background-clip:text 完成，零 rAF、零依赖。
+
+   三条改之前必须知道的事：
+   1) width: fit-content 不能删。渐变是相对元素盒子铺的，h2/p 默认占满整行，
+      而文字只占左边一小段，不改就只看到渐变最左端一截，根本看不出是渐变。
+   2) 深底 / 浅底必须是两套色，不能共用一套。青 #22D3EE 在 #F8FAFC 上只有
+      1.73:1，浅底上等于隐形。
+      深底（含首屏极光）：起端 #60A5FA —— 就是 .hero-en 用的那个色，极光最坏
+      帧实测 4.64:1，有实测背书；中段 #38BDF8、末端 #22D3EE 更亮，更安全。
+      浅底：#1E40AF 8.7:1 / #2563EB 5.2:1 / #0E7490 5.4:1（对纯白 #FFF）。
+   3) 整段包在 @supports 里。background-clip:text 一旦不生效，
+      -webkit-text-fill-color:transparent 会让文字整个消失，不是「退回纯色」。
+   -------------------------------------------------------------------------- */
+.gt {
+  width: fit-content;
+  max-width: 100%;
+  padding-right: .08em;   /* Chromium 在 background-clip:text 下会吃掉末字右侧约 1px */
+}
+
+/* 浅色底（默认） */
+.gt { --gt-1: #1E40AF; --gt-2: #2563EB; --gt-3: #0E7490; }
+/* 深色底：换成亮端，整套对深色底与极光都 ≥4.5:1 */
+.hero .gt,
+.section--dark .gt { --gt-1: #60A5FA; --gt-2: #38BDF8; --gt-3: #22D3EE; }
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .gt {
+    background-image: linear-gradient(90deg, var(--gt-1) 0%, var(--gt-2) 52%, var(--gt-3) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* 打印时 text-fill-color 仍然生效，会把渐变文字变透明，退回纯色 */
+@media print {
+  .gt { background-image: none; -webkit-text-fill-color: currentColor; }
+}
+
+/* ---- 边缘发光 .edge-glow -------------------------------------------------
+   移植自 React Bits 的 <BorderGlow />。原组件 = React 壳 + pointermove 计算，
+   React 部分没要（本项目零框架），JS 逻辑在 main.js 末尾约 30 行：pointermove
+   时算出「离边缘多近」和「光标角度」，写进 --edge-proximity / --cursor-angle，
+   剩下的全是 CSS。三层：彩色描边 / 内部填充 / 外发光。
+
+   改之前必须知道的五点：
+   1) .edge-light 必须是真实元素 —— 伪元素只有 ::before/::after 两个，三层不够用。
+      且必须 pointer-events:none：它的 inset 是负值，会盖到邻居卡片上挡点击。
+   2) --card-bg 必须和卡片自身背景一致。::before 用它填 padding-box，把 mesh
+      渐变挡在边框区域里；填错会让内容区整块变色。
+   3) 内部填充那层依赖 mask-composite，已包 @supports —— 不支持的浏览器整层
+      不渲染（只少一层），不会糊成一团。
+   4) 手机上没有 hover，@media (hover:none) 下改成描边常亮 + 关掉外发光。
+   5) 不要给 .edge-glow 加 transform —— 会跟 .card--lift:hover 的 translateY
+      打架（层叠上下文靠 isolation:isolate 建立，不需要 translate3d）。
+   -------------------------------------------------------------------------- */
+.edge-glow {
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 30;
+  --color-sensitivity: 50;      /* = edge-sensitivity + 20 */
+  /* 外发光向外扩的距离。必须 < container 的 padding(20px)：.edge-light 是
+     真实元素，向外扩多少就参与多少 scrollWidth，实测 28px 时 320~600px 会
+     溢出 7px。发光本身靠 box-shadow 扩散（不进 scrollWidth），收窄这个盒子
+     不影响观感。原组件默认 40px。 */
+  --glow-padding: 18px;
+  --cone-spread: 25;
+  --fill-opacity: .5;
+  --card-bg: #FFFFFF;
+
+  /* mesh 三色：站内蓝 / 青 / 白 */
+  --g-a: #2563EB;
+  --g-b: #22D3EE;
+  --g-c: #FFFFFF;
+
+  /* 7 支径向渐变，按原组件 COLOR_MAP [0,1,2,0,1,2,1] 分布到固定位置 */
+  --m1: radial-gradient(at 80% 55%, var(--g-a) 0px, transparent 50%);
+  --m2: radial-gradient(at 69% 34%, var(--g-b) 0px, transparent 50%);
+  --m3: radial-gradient(at  8%  6%, var(--g-c) 0px, transparent 50%);
+  --m4: radial-gradient(at 41% 38%, var(--g-a) 0px, transparent 50%);
+  --m5: radial-gradient(at 86% 85%, var(--g-b) 0px, transparent 50%);
+  --m6: radial-gradient(at 82% 18%, var(--g-c) 0px, transparent 50%);
+  --m7: radial-gradient(at 51%  4%, var(--g-b) 0px, transparent 50%);
+  --m-base: linear-gradient(var(--g-a) 0 100%);
+
+  /* 外发光：站内强调蓝 #2563EB 的 HSL，7 档透明度（对应原组件 intensity=1） */
+  --glow-color:    hsl(221deg 83% 68% / 100%);
+  --glow-color-60: hsl(221deg 83% 68% / 60%);
+  --glow-color-50: hsl(221deg 83% 68% / 50%);
+  --glow-color-40: hsl(221deg 83% 68% / 40%);
+  --glow-color-30: hsl(221deg 83% 68% / 30%);
+  --glow-color-20: hsl(221deg 83% 68% / 20%);
+  --glow-color-10: hsl(221deg 83% 68% / 10%);
+
+  position: relative;
+  isolation: isolate;   /* 建层叠上下文，让 z-index:-1 的装饰层留在卡片内 */
+  overflow: visible;
+}
+
+/* 三个装饰层：不 hover 时淡出（0.75s），比原组件的 .25s 淡入慢，收得干净 */
+.edge-glow::before,
+.edge-glow::after,
+.edge-glow > .edge-light {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity .25s ease-out;
+  z-index: -1;
+}
+.edge-glow:not(:hover)::before,
+.edge-glow:not(:hover)::after,
+.edge-glow:not(:hover) > .edge-light { opacity: 0; transition: opacity .75s ease-in-out; }
+
+/* 第一层：彩色描边。padding-box 用 --card-bg 盖住，只在 border-box 露出 mesh */
+.edge-glow::before {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-bg) 0 100%) padding-box,
+    linear-gradient(rgb(255 255 255 / 0%) 0% 100%) border-box,
+    var(--m1) border-box, var(--m2) border-box, var(--m3) border-box,
+    var(--m4) border-box, var(--m5) border-box, var(--m6) border-box,
+    var(--m7) border-box, var(--m-base) border-box;
+  opacity: calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+  -webkit-mask-image: conic-gradient(from var(--cursor-angle) at center,
+    black calc(var(--cone-spread) * 1%),
+    transparent calc((var(--cone-spread) + 15) * 1%),
+    transparent calc((100 - var(--cone-spread) - 15) * 1%),
+    black calc((100 - var(--cone-spread)) * 1%));
+  mask-image: conic-gradient(from var(--cursor-angle) at center,
+    black calc(var(--cone-spread) * 1%),
+    transparent calc((var(--cone-spread) + 15) * 1%),
+    transparent calc((100 - var(--cone-spread) - 15) * 1%),
+    black calc((100 - var(--cone-spread)) * 1%));
+}
+
+/* 第二层：边缘内侧的填充。依赖 mask-composite，不支持就整层不渲染 */
+@supports (mask-composite: subtract) or (-webkit-mask-composite: source-out) {
+  .edge-glow::after {
+    border: 1px solid transparent;
+    background:
+      var(--m1) padding-box, var(--m2) padding-box, var(--m3) padding-box,
+      var(--m4) padding-box, var(--m5) padding-box, var(--m6) padding-box,
+      var(--m7) padding-box, var(--m-base) padding-box;
+    -webkit-mask-image:
+      linear-gradient(to bottom, black, black),
+      radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+      radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+      radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+      radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+      radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+      conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+    mask-image:
+      linear-gradient(to bottom, black, black),
+      radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+      radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+      radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+      radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+      radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+      conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+    -webkit-mask-composite: source-out, source-over, source-over, source-over, source-over, source-over;
+    mask-composite: subtract, add, add, add, add, add;
+    opacity: calc(var(--fill-opacity) * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+    mix-blend-mode: soft-light;
+  }
+  /* 浅色卡片上 soft-light 会把白卡压脏，改用 normal */
+  .edge-glow--light::after { mix-blend-mode: normal; }
+}
+
+/* 第三层：外发光。inset 取负值向外扩，双层 box-shadow（内 + 外）堆出柔光 */
+.edge-glow > .edge-light {
+  inset: calc(var(--glow-padding) * -1);
+  z-index: 1;
+  opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+  -webkit-mask-image: conic-gradient(from var(--cursor-angle) at center,
+    black 2.5%, transparent 10%, transparent 90%, black 97.5%);
+  mask-image: conic-gradient(from var(--cursor-angle) at center,
+    black 2.5%, transparent 10%, transparent 90%, black 97.5%);
+  mix-blend-mode: plus-lighter;
+}
+.edge-glow--light > .edge-light { mix-blend-mode: normal; }
+.edge-glow > .edge-light::before {
+  content: "";
+  position: absolute;
+  inset: var(--glow-padding);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--glow-color),
+    inset 0 0 1px 0 var(--glow-color-60),
+    inset 0 0 3px 0 var(--glow-color-50),
+    inset 0 0 6px 0 var(--glow-color-40),
+    inset 0 0 15px 0 var(--glow-color-30),
+    inset 0 0 25px 2px var(--glow-color-20),
+    inset 0 0 50px 2px var(--glow-color-10),
+    0 0 1px 0 var(--glow-color-60),
+    0 0 3px 0 var(--glow-color-50),
+    0 0 6px 0 var(--glow-color-40),
+    0 0 15px 0 var(--glow-color-30),
+    0 0 25px 2px var(--glow-color-20),
+    0 0 50px 2px var(--glow-color-10);
+}
+
+/* 触摸设备：没有 hover，改成描边常亮、去掉锥形遮罩（否则永远是默认 45deg 那一角）。
+   选择器必须带上 :not(:hover) —— 上面「不 hover 就淡出」那条特异性更高，
+   不写平就会被它压成 opacity:0，手机上整层看不见。 */
+@media (hover: none) {
+  .edge-glow:not(:hover)::before { opacity: .32; -webkit-mask-image: none; mask-image: none; }
+  .edge-glow:not(:hover)::after  { opacity: calc(var(--fill-opacity) * .3); -webkit-mask-image: none; mask-image: none; }
+  .edge-glow > .edge-light { display: none; }
+}
+
+/* reduced-motion：三层全关，卡片退回普通状态 */
+@media (prefers-reduced-motion: reduce) {
+  .edge-glow::before,
+  .edge-glow::after,
+  .edge-glow > .edge-light { opacity: 0 !important; }
+}
+
+/* 代码窗口是深色面板：底色换成 --code-bg；overflow 必须放开，否则外发光被裁掉，
+   代价是顶栏要自己补圆角（原来靠父级 overflow:hidden 裁） */
+.code.edge-glow { --card-bg: #131C31; overflow: visible; }
+.code.edge-glow .code-bar { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+
+/* ---- 网格背景 .shape-grid（Canvas 2D，见 assets/js/shapegrid.js）----------
+   铺在区块最底层当装饰纹理。pointer-events:none —— 它不能拦住卡片点击，
+   但 pointermove 是监听在 window 上的，照样收得到指针位置。
+   区块需要 .has-grid 给定位上下文，内容要压在网格之上（z-index:1）。 */
+.has-grid { position: relative; }
+.has-grid > .container { position: relative; z-index: 1; }
+.shape-grid {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.shape-grid-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  display: block;
+  transform-origin: 0 0;
+}
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -183,7 +470,7 @@ h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
   padding: 11px 22px;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  font-weight: 700; font-size: var(--fs-4);
+  font-weight: 600; font-size: var(--fs-4);
   text-decoration: none;
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
@@ -199,17 +486,57 @@ h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
 .btn--sm { min-height: 40px; padding: 8px 14px; font-size: var(--fs-5); }
 .btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
 
-/* 图稿占位：纯 CSS 绘制，禁止外链图床 */
+/* 图稿占位：纯 CSS 绘制，禁止外链图床。
+   深色渐变底 + 网格底纹 + 大号编号 + 角标，读起来是版式的一部分，
+   而不是「还没填完」的灰斜条纹。 */
 .ph {
+  position: relative;
   width: 100%;
-  border: 1px dashed var(--c-line-strong);
+  border: 0;
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, rgba(37,99,235,.06), rgba(15,23,42,.05)),
-    repeating-linear-gradient(45deg, #EEF2F7 0 10px, #F5F8FB 10px 20px);
-  display: grid; place-items: center; padding: 16px; text-align: center;
+    repeating-linear-gradient(to right, rgba(255,255,255,.05) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.05) 0 1px, transparent 1px 24px),
+    radial-gradient(120% 110% at 90% 6%, rgba(34,211,238,.12), transparent 58%),
+    radial-gradient(110% 110% at 6% 98%, rgba(37,99,235,.20), transparent 62%),
+    linear-gradient(160deg, #0F172A 0%, #1B2336 100%);
+  overflow: hidden;
+  display: grid;
+  align-items: end; justify-items: start;
+  padding: 18px;
+  text-align: left;
 }
-.ph span { font-size: var(--fs-5); color: var(--c-muted); line-height: 1.6; }
+.ph span {
+  position: relative;
+  font-size: var(--fs-5);
+  color: var(--c-on-dark-muted);
+  line-height: 1.6;
+}
+/* 大号编号：用 CSS 计数器自动生成 01~06，改卡片顺序也不用动 HTML */
+.work-card { counter-increment: work; }
+.ph::before {
+  content: counter(work, decimal-leading-zero);
+  position: absolute; right: 16px; bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700; line-height: 1; letter-spacing: -.03em;
+  color: rgba(34,211,238,.16);
+  pointer-events: none;
+  transition: color var(--dur-slow) var(--ease);
+}
+/* 左上角标：瑞士网格的取景记号，hover 时才完全显现 */
+.ph::after {
+  content: "";
+  position: absolute; left: 14px; top: 14px;
+  width: 22px; height: 22px;
+  border-top: 1px solid var(--c-aux);
+  border-left: 1px solid var(--c-aux);
+  opacity: .45;
+  transition: opacity var(--dur-slow) var(--ease);
+}
+.work-card:hover .ph::before { color: rgba(34,211,238,.28); }
+.work-card:hover .ph::after { opacity: 1; }
+
 .ph--16x9 { aspect-ratio: 16 / 9; }
 .ph--4x3 { aspect-ratio: 4 / 3; }
 .ph--1x1 { aspect-ratio: 1 / 1; max-width: 200px; margin: 0 auto; }
@@ -239,7 +566,7 @@ h3 { font-size: var(--fs-3); line-height: 1.45; font-weight: 700; }
   font-family: var(--font-mono); font-weight: 700; font-size: 13px; letter-spacing: .02em;
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-text strong { font-size: 15px; letter-spacing: .04em; }
+.brand-text strong { font-size: 15px; font-weight: 600; letter-spacing: .04em; }
 .brand-text em {
   font-style: normal; font-family: var(--font-mono);
   font-size: 10px; letter-spacing: .16em; color: var(--c-muted);
@@ -289,20 +616,42 @@ body.nav-open { overflow: hidden; }
   overflow: hidden;
   padding: clamp(56px, 9vw, 120px) 0 clamp(48px, 6vw, 88px);
 }
+/* 首屏显式分层（原来靠 DOM 顺序：::after 的径向光其实盖在内容之上）
+   0 = 网格底纹 · 1 = 极光 canvas · 2 = 径向光 · 3 = 内容 */
 .hero::before {
-  content: ""; position: absolute; inset: 0;
+  content: ""; position: absolute; inset: 0; z-index: 0;
   background-image:
     repeating-linear-gradient(to right, rgba(255,255,255,.055) 0 1px, transparent 1px 56px),
     repeating-linear-gradient(to bottom, rgba(255,255,255,.055) 0 1px, transparent 1px 56px);
   pointer-events: none;
 }
+/* 极光已经是主要光源，这颗径向光压淡作为补光，避免两处蓝光叠加发糊 */
 .hero::after {
   content: ""; position: absolute; right: -10%; top: -30%;
+  z-index: 2;
   width: 620px; height: 620px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(37,99,235,.28), transparent 68%);
+  background: radial-gradient(circle, rgba(37,99,235,.14), transparent 68%);
   pointer-events: none;
 }
-.hero > .container { position: relative; }
+.hero > .container { position: relative; z-index: 3; }
+
+/* --- 极光背景（WebGL2 canvas，见 assets/js/aurora.js） --- */
+.hero-aurora {
+  position: absolute; inset: 0; z-index: 1;
+  overflow: hidden;
+  pointer-events: none;      /* 纯装饰，不吃任何点击 */
+  /* 底部渐隐：让极光收在首屏内，不和下方的浅色区块抢边界 */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,.35) 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,.35) 82%, transparent 100%);
+}
+.hero-aurora .aurora-canvas { display: block; width: 100%; height: 100%; }
+/* 无 WebGL2 时 aurora.js 会自行移除 canvas，这里不需要额外兜底 */
+
+/* 窄屏必须减弱：极光的色带是横向铺满容器的，视口越窄、青色的那端越早
+   压到文字区。实测不减弱时 eyebrow / hero-en / hero-lead 在 390px 下掉到
+   3.1~4.0:1，低于 4.5:1 门槛。 */
+@media (max-width: 1023.98px) { .hero-aurora { opacity: .26; } }
+@media (max-width: 767.98px) { .hero-aurora { opacity: .24; } }
 .hero-title { color: #fff; margin-bottom: 14px; }
 .hero-en {
   display: block; margin-top: 10px;
@@ -312,12 +661,59 @@ body.nav-open { overflow: hidden; }
 }
 .hero-role {
   font-size: clamp(1rem, .96rem + .3vw, 1.125rem);
+  font-weight: 500;                 /* 副标题档：500 */
   color: var(--c-on-dark); margin-bottom: 18px;
 }
 .hero-lead { color: var(--c-on-dark-muted); max-width: 60ch; margin-bottom: 28px; }
 .hero .btn-row { margin-bottom: 28px; }
 .hero-facts { display: flex; flex-wrap: wrap; gap: 8px; }
-.hero .tag { backdrop-filter: none; }
+/* 首屏是深色底，标签得用深色变体（原来沿用浅色 chip，白底灰字在深海军蓝上很跳） */
+.hero .tag {
+  backdrop-filter: none;
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: var(--c-on-dark);
+}
+
+/* --- 右列视觉主体：代码窗口（纯 CSS，无图片） --- */
+.hero-panel { display: grid; gap: 16px; align-content: start; }
+
+.code {
+  border: 1px solid var(--code-line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #16203A 0%, var(--code-bg) 60%);
+  box-shadow: var(--elev-panel);
+  overflow: hidden;
+}
+.code-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: var(--code-bar);
+  border-bottom: 1px solid var(--code-line);
+}
+.code-dots { display: inline-flex; gap: 6px; }
+.code-dots i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.16); }
+/* 只有第一个圆点带颜色，且用辅助青：深色面板上唯一一处冷暖对比 */
+.code-dots i:first-child { background: rgba(34,211,238,.6); }
+.code-file {
+  font-family: var(--font-mono); font-size: .75rem;
+  letter-spacing: .06em; color: var(--c-on-dark-muted);
+}
+.code-body {
+  padding: 14px 18px 18px;
+  font-family: var(--font-mono);
+  font-size: clamp(.72rem, .68rem + .26vw, .8125rem);
+  line-height: 1.95;
+  color: var(--c-on-dark);
+  overflow-x: auto;
+}
+.c-line { display: block; white-space: pre; }
+.c-cmt { color: var(--code-cmt); }
+/* 关键字用「颜色 + 字重」双重标记，和同为蓝系的字符串拉开层次 */
+.c-key { color: var(--code-key); font-weight: 600; }
+.c-typ { color: var(--code-typ); }
+.c-str { color: var(--code-str); }
+.c-punc { color: var(--c-on-dark-muted); }
 
 /* --------------------------------------------------------------------------
    6. 关键事实条
@@ -329,7 +725,7 @@ body.nav-open { overflow: hidden; }
   font-family: var(--font-mono); font-size: .8125rem;
   letter-spacing: .1em; text-transform: uppercase; color: var(--c-muted);
 }
-.fact dd { margin: 0; font-size: var(--fs-4); font-weight: 700; }
+.fact dd { margin: 0; font-size: var(--fs-4); font-weight: 600; }
 
 /* --------------------------------------------------------------------------
    7. 能力栈
@@ -391,13 +787,14 @@ body.nav-open { overflow: hidden; }
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 36px; padding: 6px 12px;
   background: transparent; border: 1px solid var(--c-line-strong);
-  border-radius: 6px; color: var(--c-ink);
-  font-size: var(--fs-5); font-weight: 700;
+  border-radius: 6px;   color: var(--c-ink);
+  font-size: var(--fs-5); font-weight: 600;
   transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .work-open::after { content: " →"; font-family: var(--font-mono); }
 .work-open:hover { border-color: var(--c-accent); background: var(--c-bg); color: var(--c-accent); }
-.work-card:hover { border-color: var(--c-line-strong); }
+/* 与 .card:hover 统一：hover 时边框转强调蓝，不用中性灰 */
+.work-card:hover { border-color: rgba(37,99,235,.38); }
 
 .pd {
   width: min(860px, calc(100vw - 32px));
@@ -433,10 +830,11 @@ body.nav-open { overflow: hidden; }
   transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 .pd-close svg { width: 18px; height: 18px; }
-.pd-close:hover { border-color: var(--c-line-strong); background: var(--c-bg); color: var(--c-ink); }
+.pd-close:hover { border-color: rgba(8,145,178,.4); background: rgba(34,211,238,.06); color: var(--c-aux-deep); }
 
 .pd-body { padding: 22px 24px 28px; overflow-y: auto; overscroll-behavior: contain; }
-.pd-lead { font-size: 1.0625rem; color: var(--c-ink); line-height: 1.8; margin-bottom: 20px; }
+/* 强调句：500 */
+.pd-lead { font-size: 1.0625rem; font-weight: 500; color: var(--c-ink); line-height: 1.8; margin-bottom: 20px; }
 .pd-todo {
   display: inline-block; margin-left: 6px;
   font-family: var(--font-mono); font-size: .75rem;
@@ -454,7 +852,7 @@ body.nav-open { overflow: hidden; }
   letter-spacing: .1em; text-transform: uppercase;
   color: var(--c-muted); margin-bottom: 2px;
 }
-.pd-facts dd { margin: 0; font-weight: 700; }
+.pd-facts dd { margin: 0; font-weight: 600; }
 .pd-body h4 {
   font-size: .8125rem; font-family: var(--font-mono);
   letter-spacing: .12em; text-transform: uppercase;
@@ -510,15 +908,31 @@ body.pd-open { overflow: hidden; }
 .beian a:hover { color: #fff; }
 
 /* --------------------------------------------------------------------------
-   12. 滚动淡入
+   12. 滚动淡入 + 首屏入场
    -------------------------------------------------------------------------- */
 .reveal { opacity: 0; transform: translateY(12px); transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease); }
 .reveal.is-in { opacity: 1; transform: none; }
 
+/* 首屏入场：纯 CSS transition，JS 只负责加 .is-in；每个元素错开 ~90ms */
+.hero-in {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .55s var(--ease) var(--hd, 0ms),
+              transform .55s var(--ease) var(--hd, 0ms);
+  will-change: opacity, transform;
+}
+.hero-in.is-in { opacity: 1; transform: none; will-change: auto; }
+.hero .eyebrow.hero-in  { --hd: 0ms; }
+.hero-title.hero-in     { --hd: 90ms; }
+.hero-role.hero-in      { --hd: 180ms; }
+.hero-lead.hero-in      { --hd: 270ms; }
+.hero .btn-row.hero-in  { --hd: 360ms; }
+.hero-panel.hero-in     { --hd: 440ms; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
-  .reveal { opacity: 1; transform: none; }
+  .reveal, .hero-in { opacity: 1; transform: none; }
 }
 
 /* --------------------------------------------------------------------------
@@ -540,7 +954,14 @@ body.pd-open { overflow: hidden; }
 @media (min-width: 1024px) {
   .grid--3 { grid-template-columns: repeat(3, 1fr); }
   .grid--4 { grid-template-columns: repeat(4, 1fr); }
-  .hero-split { display: grid; grid-template-columns: 1.25fr .75fr; gap: 48px; align-items: end; }
+  /* 右列现在有实际高度（代码窗口），再用 end 对齐会把两块都压到底部、
+     左列中间留空，改成 center 让两侧互为视觉重心。
+     右列用固定 420px 而不是 fr：fr 会让代码窗口在 1024~1200 之间变窄到
+     撑不下最长一行，被迫出现横向滚动条。 */
+  .hero-split {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+    gap: 48px; align-items: center;
+  }
 }
 
 @media (min-width: 1440px) {
@@ -549,6 +970,9 @@ body.pd-open { overflow: hidden; }
 
 /* 移动端导航折叠 */
 @media (max-width: 767.98px) {
+  /* 窄屏下代码窗口收紧内边距 + 缩字号，最长一行仍能整行显示，不出横向滚动条 */
+  .code-body { padding: 12px 14px 16px; font-size: .6875rem; letter-spacing: 0; }
+
   /* .nav 变成 fixed 后脱离文档流，右上角的菜单按钮会顶到品牌名旁边，
      所以这里由 .header-actions 承担 margin-left:auto 把它推到最右 */
   .header-actions { margin-left: auto; }
