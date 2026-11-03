@@ -13,7 +13,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ColinN · 个人作品集 — Java 后端 / 全栈方向 | 项目与技术栈</title>
+  <title>ColinN · 个人作品集 — AI全栈开放 / 大模型开发 | 项目与技术栈</title>
   <meta name="description"
     content="ColinN 的个人作品集，方向 Java 后端 / 全栈。收录项目与使用的技术栈：Java、Spring Boot、MySQL、Redis、Vue 3、Linux、Docker。">
   <meta name="keywords" content="ColinN,个人作品集,Java,全栈,Spring Boot,MySQL,Redis,Vue,前端">
@@ -26,8 +26,8 @@
   <meta property="og:type" content="profile">
   <meta property="og:site_name" content="ColinN · 个人作品集">
   <meta property="og:locale" content="zh_CN">
-  <meta property="og:title" content="ColinN · 个人作品集 — Java 后端 / 全栈方向">
-  <meta property="og:description" content="方向 Java 后端 / 全栈。收录项目与使用的技术栈。">
+  <meta property="og:title" content="ColinN · 个人作品集 — AI全栈开放 / 大模型开发">
+  <meta property="og:description" content="方向 AI全栈开放 / 大模型开发。收录项目与使用的技术栈。">
   <meta property="og:url" content="https://example.com/">
   <!-- TODO: 如需分享缩略图，放置本地图片后取消下行注释 -->
   <!-- <meta property="og:image" content="assets/img/og-cover.jpg"> -->
@@ -35,10 +35,15 @@
   <link rel="icon"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230F172A'/%3E%3Ctext x='16' y='21' font-size='13' font-family='monospace' font-weight='700' fill='%23fff' text-anchor='middle'%3ECN%3C/text%3E%3C/svg%3E">
   <!-- v= 版本参数：改版时递增，避免浏览器/预览面板缓存旧的 CSS-->
-  <link rel="stylesheet" href="assets/css/style.css?v=20261013r">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261103c">
   <!-- JS 不可用时，首屏入场元素保持可见（否则整块首屏会是空的） -->
   <noscript>
-    <style>.hero-in{opacity:1;transform:none}</style>
+    <style>
+      .hero-in {
+        opacity: 1;
+        transform: none
+      }
+    </style>
   </noscript>
 </head>
 
@@ -77,15 +82,13 @@
            canvas，首屏退回原有深色底 + 网格 + 径向光，不留空白。参数可直接改下面
            的 data-aurora（配色用的是站内令牌色：accent-deep → accent → aux 青） -->
       <div class="hero-aurora" aria-hidden="true"
-        data-aurora='{"colorStops":["#0F172A","#2563EB","#22D3EE"],"speed":0.85,"amplitude":0.85,"blend":0.45,"height":0.3,"scale":1,"glow":0.5,"brightness":0.52,"opacity":0.62,"layers":1,"maxDpr":0.6}'></div>
+        data-aurora='{"colorStops":["#0F172A","#2563EB","#22D3EE"],"speed":0.85,"amplitude":0.85,"blend":0.45,"height":0.3,"scale":1,"glow":0.5,"brightness":0.52,"opacity":0.62,"layers":1,"maxDpr":0.6}'>
+      </div>
       <div class="container hero-split">
         <div class="hero-col">
           <p class="eyebrow hero-in">// personal portfolio · 2026</p>
           <h1 class="hero-title hero-in">ColinN<span class="hero-en">COLINN</span></h1>
-          <p class="hero-role gt hero-in">Java 后端 · 全栈方向</p>
-          <p class="hero-lead hero-in">
-            这里只放两类内容：做过的项目，和用到的技术栈。
-          </p>
+          <p class="hero-role gt hero-in">AI全栈开放 / 大模型开发</p>
           <div class="btn-row hero-in">
             <a class="btn btn--primary" href="#works">查看作品</a>
           </div>
@@ -98,11 +101,15 @@
               <span class="code-dots"><i></i><i></i><i></i></span>
               <span class="code-file">stack.java</span>
             </div>
-            <div class="code-body"><code><span class="c-line"><span class="c-cmt">// 当前技术栈 · 随项目推进更新</span></span><span class="c-line"><span class="c-key">public class</span> <span class="c-typ">Stack</span> <span class="c-punc">{</span></span><span class="c-line">    <span class="c-key">var</span> lang     <span class="c-punc">=</span> <span class="c-str">"Java · SQL"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> backend  <span class="c-punc">=</span> <span class="c-str">"Spring Boot · MyBatis"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> data     <span class="c-punc">=</span> <span class="c-str">"MySQL · Redis"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> frontend <span class="c-punc">=</span> <span class="c-str">"Vue 3 · TypeScript"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> ops      <span class="c-punc">=</span> <span class="c-str">"Linux · Nginx · Docker"</span><span class="c-punc">;</span></span><span class="c-line"><span class="c-punc">}</span></span></code></div>
+            <!-- 九行对应下面技术栈区块的九张卡，改卡片分组时同步这里
+                 字段名按 7 字符对齐（backend 最长），行宽控制在 43 列内不出横向滚动条 -->
+            <div class="code-body">
+              <code><span class="c-line"><span class="c-cmt">// 技术栈 · 随项目推进更新</span></span><span class="c-line"><span class="c-key">public class</span> <span class="c-typ">Stack</span> <span class="c-punc">{</span></span><span class="c-line">    <span class="c-key">var</span> lang    <span class="c-punc">=</span> <span class="c-str">"Java · C · Python"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> core    <span class="c-punc">=</span> <span class="c-str">"JVM · 并发 · 集合"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> backend <span class="c-punc">=</span> <span class="c-str">"Spring Boot · MyBatis"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> data    <span class="c-punc">=</span> <span class="c-str">"MySQL · Redis · ES"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> mq      <span class="c-punc">=</span> <span class="c-str">"RocketMQ · Dubbo"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> front   <span class="c-punc">=</span> <span class="c-str">"Vue 3 · Vite"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> ai      <span class="c-punc">=</span> <span class="c-str">"LangChain · RAG · Dify"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> ops     <span class="c-punc">=</span> <span class="c-str">"Linux · Docker · Nginx"</span><span class="c-punc">;</span></span><span class="c-line">    <span class="c-key">var</span> sec     <span class="c-punc">=</span> <span class="c-str">"JWT · OAuth 2.0"</span><span class="c-punc">;</span></span><span class="c-line"><span class="c-punc">}</span></span></code>
+            </div>
           </div>
           <p class="tag-row hero-facts">
-            <span class="tag">Java 后端</span>
-            <span class="tag">全栈方向</span>
+            <span class="tag">AI全栈开放</span>
+            <span class="tag">大模型开发</span>
           </p>
         </div>
       </div>
@@ -113,11 +120,12 @@
       <div class="container facts-inner">
         <dl class="fact">
           <dt>Direction</dt>
-          <dd>Java 后端 / 全栈</dd>
+          <dd>AI全栈开放 / 大模型开发</dd>
         </dl>
         <dl class="fact">
           <dt>Stack</dt>
-          <dd>Java · Spring Boot · MySQL · Vue 3</dd>
+          <dd>Java · Python · JVM · 并发 · SpringBoot · MyBatis · MySQL · Redis · RocketMQ · Dubbo · Vue3 · LangChain ·
+            RAG · Docker · Nginx · JWT</dd>
         </dl>
       </div>
     </section>
@@ -128,7 +136,7 @@
         <div class="section-head reveal">
           <p class="eyebrow">// skills</p>
           <h2 class="section-title gt">技术栈</h2>
-          <p class="section-lead">按语言、后端、前端、工程四条线整理，随项目推进持续更新。</p>
+          <p class="section-lead">按语言、后端、数据、中间件、前端、AI、工程、安全分类整理，随项目推进持续更新。</p>
         </div>
         <div class="grid grid--3">
           <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
@@ -139,21 +147,66 @@
               <span class="tag tag--accent">Java</span>
               <span class="tag tag--accent">C</span>
               <span class="tag tag--accent">Python</span>
-              <span class="tag">TypeScript</span>
               <span class="tag">SQL</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">TypeScript</span>
             </p>
           </article>
           <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
             <span class="edge-light" aria-hidden="true"></span>
-            <h3>后端</h3>
-            <p class="skill-note">主力方向</p>
+            <h3>Java 核心</h3>
+            <p class="skill-note">语法之外的底层与工程能力</p>
+            <p class="tag-row">
+              <span class="tag tag--accent">JVM</span>
+              <span class="tag tag--accent">并发编程</span>
+              <span class="tag tag--accent">设计模式</span>
+              <span class="tag">数据结构与算法</span>
+              <span class="tag">集合框架</span>
+              <span class="tag">泛型与反射</span>
+              <span class="tag">JDBC</span>
+            </p>
+          </article>
+          <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
+            <span class="edge-light" aria-hidden="true"></span>
+            <h3>后端框架</h3>
+            <p class="skill-note">Spring 体系，从单体到微服务</p>
             <p class="tag-row">
               <span class="tag tag--accent">Spring Boot</span>
+              <span class="tag tag--accent">Spring Cloud</span>
               <span class="tag tag--accent">MyBatis</span>
-              <span class="tag tag--accent">MySQL</span>
-              <span class="tag">Redis</span>
+              <span class="tag">Spring MVC</span>
+              <span class="tag">MyBatis-Plus</span>
+              <span class="tag">Nacos</span>
+              <span class="tag">Netty</span>
               <span class="tag">RESTful API</span>
-              <span class="tag">JWT</span>
+            </p>
+          </article>
+          <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
+            <span class="edge-light" aria-hidden="true"></span>
+            <h3>数据存储</h3>
+            <p class="skill-note">MySQL 为主，其余按场景选型</p>
+            <p class="tag-row">
+              <span class="tag tag--accent">MySQL</span>
+              <span class="tag tag--accent">Redis</span>
+              <span class="tag tag--accent">MongoDB</span>
+              <span class="tag">Elasticsearch</span>
+              <span class="tag">Oracle</span>
+              <span class="tag">Solr</span>
+              <span class="tag">Lucene</span>
+            </p>
+          </article>
+          <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
+            <span class="edge-light" aria-hidden="true"></span>
+            <h3>中间件与分布式</h3>
+            <p class="skill-note">消息、注册中心与任务调度</p>
+            <p class="tag-row">
+              <span class="tag tag--accent">RocketMQ</span>
+              <span class="tag tag--accent">RabbitMQ</span>
+              <span class="tag tag--accent">Dubbo</span>
+              <span class="tag">ZooKeeper</span>
+              <span class="tag">Elastic-Job</span>
+              <span class="tag">分布式事务</span>
+              <span class="tag">缓存设计</span>
             </p>
           </article>
           <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
@@ -163,22 +216,56 @@
             <p class="tag-row">
               <span class="tag tag--accent">HTML</span>
               <span class="tag tag--accent">CSS</span>
-              <span class="tag tag--accent">JavaScript</span>
-              <span class="tag">Vue 3</span>
+              <span class="tag tag--accent">Vue 3</span>
+              <span class="tag">Vite</span>
+              <span class="tag">Element Plus</span>
+              <span class="tag">Axios</span>
               <span class="tag">响应式布局</span>
             </p>
           </article>
           <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
             <span class="edge-light" aria-hidden="true"></span>
-            <h3>工程与部署</h3>
-            <p class="skill-note">开发流程与环境</p>
+            <h3>AI 与大模型</h3>
+            <p class="skill-note">模型能力与业务侧的结合点</p>
+            <p class="tag-row">
+              <span class="tag tag--accent">机器学习</span>
+              <span class="tag tag--accent">深度学习</span>
+              <span class="tag tag--accent">NLP</span>
+              <span class="tag">TensorFlow</span>
+              <span class="tag">PyTorch</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">LangChain</span>
+              <span class="tag">RAG</span>
+              <span class="tag">Dify</span>
+              <span class="tag">Coze</span>
+            </p>
+          </article>
+          <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
+            <span class="edge-light" aria-hidden="true"></span>
+            <h3>工程化与部署</h3>
+            <p class="skill-note">开发流程与线上环境</p>
             <p class="tag-row">
               <span class="tag tag--accent">Git</span>
               <span class="tag tag--accent">Linux</span>
-              <span class="tag tag--accent">Nginx</span>
-              <span class="tag">Docker</span>
+              <span class="tag tag--accent">Docker</span>
               <span class="tag">Maven</span>
+              <span class="tag">Jenkins</span>
+              <span class="tag">Nginx</span>
               <span class="tag">云服务器部署</span>
+            </p>
+          </article>
+          <article class="card card--lift skill-card edge-glow edge-glow--light reveal">
+            <span class="edge-light" aria-hidden="true"></span>
+            <h3>安全与业务组件</h3>
+            <p class="skill-note">鉴权、工作流与支付对接</p>
+            <p class="tag-row">
+              <span class="tag tag--accent">Spring Security</span>
+              <span class="tag tag--accent">Shiro</span>
+              <span class="tag tag--accent">OAuth 2.0</span>
+              <span class="tag">JWT</span>
+              <span class="tag">Activiti7 工作流</span>
+              <span class="tag">微信支付</span>
+              <span class="tag">支付宝支付</span>
             </p>
           </article>
         </div>
@@ -190,7 +277,8 @@
       <!-- 网格背景：Canvas 2D 装饰层，纯装饰不承载信息。参数直接改 data-shapegrid，
            不用碰 JS。形状 / 密度 / 漂移方向 / 高亮色都在这里调。 -->
       <div class="shape-grid" aria-hidden="true"
-        data-shapegrid='{"shape":"square","cellSize":40,"lineWidth":1,"direction":"diagonal","speed":0.5,"lineColor":"#CBD5E1","hoverColor":"#2563EB","hoverFillColor":"#2563EB","fillOpacity":0.1,"radius":1.5,"trail":0.6,"glow":0.3,"fadeX":0,"fadeY":1,"intro":true,"opacity":1}'></div>
+        data-shapegrid='{"shape":"square","cellSize":40,"lineWidth":1,"direction":"diagonal","speed":0.5,"lineColor":"#CBD5E1","hoverColor":"#2563EB","hoverFillColor":"#2563EB","fillOpacity":0.1,"radius":1.5,"trail":0.6,"glow":0.3,"fadeX":0,"fadeY":1,"intro":true,"opacity":1}'>
+      </div>
       <div class="container">
         <div class="section-head reveal">
           <p class="eyebrow">// works</p>
@@ -214,9 +302,18 @@
             <div class="work-detail" id="detail-p01" hidden>
               <p class="pd-lead">一句话说清这个项目是什么、解决什么问题。<span class="pd-todo">待填写</span></p>
               <dl class="pd-facts">
-                <div><dt>时间</dt><dd>待填写</dd></div>
-                <div><dt>角色</dt><dd>待填写</dd></div>
-                <div><dt>类型</dt><dd>待填写</dd></div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>角色</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>类型</dt>
+                  <dd>待填写</dd>
+                </div>
               </dl>
               <h4>做了什么</h4>
               <ul>
@@ -250,9 +347,18 @@
             <div class="work-detail" id="detail-p02" hidden>
               <p class="pd-lead">一句话说清这个项目是什么、解决什么问题。<span class="pd-todo">待填写</span></p>
               <dl class="pd-facts">
-                <div><dt>时间</dt><dd>待填写</dd></div>
-                <div><dt>角色</dt><dd>待填写</dd></div>
-                <div><dt>类型</dt><dd>待填写</dd></div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>角色</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>类型</dt>
+                  <dd>待填写</dd>
+                </div>
               </dl>
               <h4>做了什么</h4>
               <ul>
@@ -286,9 +392,18 @@
             <div class="work-detail" id="detail-p03" hidden>
               <p class="pd-lead">一句话说清这个项目是什么、解决什么问题。<span class="pd-todo">待填写</span></p>
               <dl class="pd-facts">
-                <div><dt>时间</dt><dd>待填写</dd></div>
-                <div><dt>角色</dt><dd>待填写</dd></div>
-                <div><dt>类型</dt><dd>待填写</dd></div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>角色</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>类型</dt>
+                  <dd>待填写</dd>
+                </div>
               </dl>
               <h4>做了什么</h4>
               <ul>
@@ -322,9 +437,18 @@
             <div class="work-detail" id="detail-p04" hidden>
               <p class="pd-lead">一句话说清这个项目是什么、解决什么问题。<span class="pd-todo">待填写</span></p>
               <dl class="pd-facts">
-                <div><dt>时间</dt><dd>待填写</dd></div>
-                <div><dt>角色</dt><dd>待填写</dd></div>
-                <div><dt>类型</dt><dd>待填写</dd></div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>角色</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>类型</dt>
+                  <dd>待填写</dd>
+                </div>
               </dl>
               <h4>做了什么</h4>
               <ul>
@@ -358,9 +482,18 @@
             <div class="work-detail" id="detail-p05" hidden>
               <p class="pd-lead">一句话说清这个项目是什么、解决什么问题。<span class="pd-todo">待填写</span></p>
               <dl class="pd-facts">
-                <div><dt>时间</dt><dd>待填写</dd></div>
-                <div><dt>角色</dt><dd>待填写</dd></div>
-                <div><dt>类型</dt><dd>待填写</dd></div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>角色</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>类型</dt>
+                  <dd>待填写</dd>
+                </div>
               </dl>
               <h4>做了什么</h4>
               <ul>
@@ -394,9 +527,18 @@
             <div class="work-detail" id="detail-p06" hidden>
               <p class="pd-lead">一句话说清这个项目是什么、解决什么问题。<span class="pd-todo">待填写</span></p>
               <dl class="pd-facts">
-                <div><dt>时间</dt><dd>待填写</dd></div>
-                <div><dt>角色</dt><dd>待填写</dd></div>
-                <div><dt>类型</dt><dd>待填写</dd></div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>角色</dt>
+                  <dd>待填写</dd>
+                </div>
+                <div>
+                  <dt>类型</dt>
+                  <dd>待填写</dd>
+                </div>
               </dl>
               <h4>做了什么</h4>
               <ul>
@@ -476,9 +618,9 @@
     </div>
   </dialog>
 
-  <script src="assets/js/aurora.js?v=20261013r"></script>
-  <script src="assets/js/shapegrid.js?v=20261013r"></script>
-  <script src="assets/js/main.js?v=20261013r"></script>
+  <script src="assets/js/aurora.js?v=20261103c"></script>
+  <script src="assets/js/shapegrid.js?v=20261103c"></script>
+  <script src="assets/js/main.js?v=20261103c"></script>
 </body>
 
 </html>
